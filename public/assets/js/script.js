@@ -1,6 +1,6 @@
-const $animalForm = document.querySelector('#animal-form');
+const $animalForm = document.querySelector("#animal-form");
 
-const handleAnimalFormSubmit = event => {
+const handleAnimalFormSubmit = (event) => {
   event.preventDefault();
 
   // get animal data and organize it
@@ -16,16 +16,36 @@ const handleAnimalFormSubmit = event => {
   }
 
   if (diet === undefined) {
-    diet = '';
+    diet = "";
   }
 
-  const selectedTraits = $animalForm.querySelector('[name="personality"').selectedOptions;
+  const selectedTraits = $animalForm.querySelector(
+    '[name="personality"'
+  ).selectedOptions;
   const personalityTraits = [];
   for (let i = 0; i < selectedTraits.length; i += 1) {
     personalityTraits.push(selectedTraits[i].value);
   }
   const animalObject = { name, species, diet, personalityTraits };
-
 };
 
-$animalForm.addEventListener('submit', handleAnimalFormSubmit);
+fetch("/api/animals", {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(animalObject),
+})
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    alert("Error: " + response.statusText);
+  })
+  .then((postResponse) => {
+    console.log(postResponse);
+    alert("Thank you for adding an animal!");
+  });
+
+$animalForm.addEventListener("submit", handleAnimalFormSubmit);
